@@ -72,6 +72,27 @@ namespace TwinSouls
         // shoot or attack (melee)
         private void Shoot(Player p)
         {
+            PictureBox shot = new PictureBox();
+            shot.Bounds = p.GetRectangle();
+            shot.Image = Properties.Resources.key;
+            shot.Tag = "shot";
+            Controls.Add(shot);
+            shot.Left += 50;
+
+            for (int i = 0; i < enemies.Count; i++)
+            {
+                if (shot.Bounds.IntersectsWith(enemies[i].GetRectangle()))
+                {
+                    for (int c = 0; c < this.Controls.Count; c++)
+                    {
+                        if (this.Controls[c] is PictureBox)
+                        if (this.Controls[c].Tag.Equals("enemy" + enemies[i].ID))
+                            this.Controls.RemoveAt(c);
+                    }
+                    enemies.RemoveAt(i);
+                    
+                }
+            }
             
         }
 
@@ -116,35 +137,6 @@ namespace TwinSouls
                 p.Left += p.playSpeed;
             }
 
-            // if go right is true and the background picture left is > 1352
-            // then we move the background picture towards the left
-            //if (goright && background.Left > -1353)
-            //{
-            //    background.Left -= backLeft;
-            //    foreach (Control x in this.Controls)
-            //    {
-            //        if (x is PictureBox && x.Tag == "platform" || x is PictureBox && x.Tag == "coin" || x is PictureBox && x.Tag = "door" || x is PictureBox & x.Tag = "key")
-            //        {
-            //            x.Left -= backLeft;
-            //        }
-            //    }
-            //}
-
-            // if goleft is true and the background picture's left is less than 2
-            // then we move the background picture towards the right
-            //if (goleft && background.Left < 2)
-            //{
-            //    background.Left += backLeft;
-            // move the platforms and coins towards the right
-            //    foreach (Control x in this.Controls)
-            //    {
-            //        if (x is PictureBox && x.Tag == "platform" || x is PictureBox && x.Tag== "coin" || x is PictureBox && x.Tag == "door" || x is PictureBox && x.Tag == "key")
-            //        {
-            //            x.Left += backLeft;
-            //        }
-            //    }
-            //}
-
             // check each control on the form
             foreach (Control x in this.Controls)
             {
@@ -173,8 +165,6 @@ namespace TwinSouls
                 }
 
                 // check enemies
-                
-                 
                 if (x is PictureBox)
                 {
                     if (x.Tag.ToString().StartsWith("enemy") && p.GetRectangle().IntersectsWith(x.Bounds))
@@ -183,25 +173,14 @@ namespace TwinSouls
                         MessageBox.Show("You Died.");
                     }
                 }
+
+                if (x is PictureBox && x.Tag == "shot")
+                {
+                    this.Controls.Remove(x);
+                }
             }
 
-            // if the player collides with a door and has a key
-            //if (player1.Bounds.IntersectsWith(door.Bounds) && hasKey)
-            //{
-            //    // change the door image to open
-            //    door.Image = Properties.Resources.door_open;
-            //    // stop the timer
-            //    gameTimer.Stop();
-            //    MessageBox.Show("You completed the level!");
-            //}
-
-            //if (player1.Bounds.IntersectsWith(key.Bounds))
-            //{
-            //    // then remove the key
-            //    this.Controls.Remove(key);
-            //    // change the has key to true
-            //    hasKey = true;
-            //}
+            
 
             
 
@@ -244,6 +223,30 @@ namespace TwinSouls
                 enemy.Top += enemy.Speed;
             }
 
+            // links the jumpspeed with the player 
+            enemy.Top += enemy.jumpSpeed;
+
+            // if jumping is true and force is less than 0
+            // then change jumping to false
+            if (enemy.jumping && enemy.force < 0)
+            {
+                enemy.jumping = false;
+            }
+
+            // if jumping is true
+            // then change jump speed to -12
+            // reduce force by 1
+            if (enemy.jumping)
+            {
+                enemy.jumpSpeed = -15;
+                enemy.force -= 1;
+            }
+            else
+            {
+                // else change the jump speed to 12
+                enemy.jumpSpeed = 15;
+            }
+
             // check each control on the form
             foreach (Control x in this.Controls)
             {
@@ -252,9 +255,12 @@ namespace TwinSouls
                 {
                     // then we are checking if the enemy is colliding with a platform
                     if (enemy.GetRectangle().IntersectsWith(x.Bounds))
-                        enemy.Top = x.Top - enemy.Height;
+                    {
+                        enemy.force = 8;
+                        enemy.Top = x.Top - enemy.Height; // place player on the platform
+                        enemy.jumpSpeed = 0; // stop the jump
+                    }
                 }
-                
             }
 
         }
@@ -278,7 +284,9 @@ namespace TwinSouls
             le.Height = 45;
             enemies.Add(le);
 
+            enemyLeft.DataBindings.Clear();
             enemyLeft.DataBindings.Add(new Binding("Text", le, "Left"));
+            enemyTop.DataBindings.Clear();
             enemyTop.DataBindings.Add(new Binding("Text", le, "Top"));
 
             PictureBox e1 = new PictureBox();
@@ -330,15 +338,12 @@ namespace TwinSouls
                 player2.jumping = true;
             }
 
-            if (e.KeyCode == Keys.RShiftKey)
+            if (e.KeyCode == Keys.ControlKey)
             {
                 Shoot(player1);
             }
 
-            if (e.KeyCode == Keys.LShiftKey)
-            {
-                Shoot(player2);
-            }
+            
         }
 
         private void Form1_KeyUp(object sender, KeyEventArgs e)
@@ -366,6 +371,54 @@ namespace TwinSouls
                 player2.jumping = false;
         }
 
-        
+        private void UnusedTutorialCode()
+        {
+            // if the player collides with a door and has a key
+            //if (player1.Bounds.IntersectsWith(door.Bounds) && hasKey)
+            //{
+            //    // change the door image to open
+            //    door.Image = Properties.Resources.door_open;
+            //    // stop the timer
+            //    gameTimer.Stop();
+            //    MessageBox.Show("You completed the level!");
+            //}
+
+            //if (player1.Bounds.IntersectsWith(key.Bounds))
+            //{
+            //    // then remove the key
+            //    this.Controls.Remove(key);
+            //    // change the has key to true
+            //    hasKey = true;
+            //}
+
+            // if go right is true and the background picture left is > 1352
+            // then we move the background picture towards the left
+            //if (goright && background.Left > -1353)
+            //{
+            //    background.Left -= backLeft;
+            //    foreach (Control x in this.Controls)
+            //    {
+            //        if (x is PictureBox && x.Tag == "platform" || x is PictureBox && x.Tag == "coin" || x is PictureBox && x.Tag = "door" || x is PictureBox & x.Tag = "key")
+            //        {
+            //            x.Left -= backLeft;
+            //        }
+            //    }
+            //}
+
+            // if goleft is true and the background picture's left is less than 2
+            // then we move the background picture towards the right
+            //if (goleft && background.Left < 2)
+            //{
+            //    background.Left += backLeft;
+            // move the platforms and coins towards the right
+            //    foreach (Control x in this.Controls)
+            //    {
+            //        if (x is PictureBox && x.Tag == "platform" || x is PictureBox && x.Tag== "coin" || x is PictureBox && x.Tag == "door" || x is PictureBox && x.Tag == "key")
+            //        {
+            //            x.Left += backLeft;
+            //        }
+            //    }
+            //}
+        }
     }
 }

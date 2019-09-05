@@ -13,6 +13,15 @@ namespace TwinSouls
         public int Width { get; set; }
         public int Height { get; set; }
 
+        public bool jumping = false;
+        public bool hasKey = false;
+
+        public int jumpSpeed = 15;
+        public int force = 14; // force of the jump
+        public int score = 0;
+
+        public int playSpeed = 18; // player speed
+
         public bool InstersectsWith(GameCharacter gc)
         {
             Rectangle rec = new Rectangle(_left, _top, Width, Height);

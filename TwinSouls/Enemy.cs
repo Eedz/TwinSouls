@@ -14,9 +14,6 @@ namespace TwinSouls
         public event PropertyChangedEventHandler PropertyChanged;
 
         public int ID { get; set; }
-        private int _left;
-        private int _top;
-        private int _speed = 3;
 
         public int Left
         {
@@ -38,7 +35,12 @@ namespace TwinSouls
             }
         }
 
-        public int Speed { get { return _speed; } set { _speed = value; } }
+        public int Speed { get { return playSpeed; } set { playSpeed = value; } }
+
+        public Enemy()
+        {
+            playSpeed = 3;
+        }
 
         // Create the OnPropertyChanged method to raise the event
         protected void OnPropertyChanged(string name)

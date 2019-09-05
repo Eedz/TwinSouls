@@ -18,14 +18,7 @@ namespace TwinSouls
 
         public bool goleft = false;
         public bool goright = false;
-        public bool jumping = false;
-        public bool hasKey = false;
 
-        public int jumpSpeed = 15;
-        public int force = 14; // force of the jump
-        public int score = 0;
-
-        public int playSpeed = 18; // player speed
 
         public int Left
         {
@@ -45,6 +38,11 @@ namespace TwinSouls
                 _top = value;
                 OnPropertyChanged("Top");
             }
+        }
+
+        public Player() : base()
+        {
+            playSpeed = 18;
         }
 
         // Create the OnPropertyChanged method to raise the event
