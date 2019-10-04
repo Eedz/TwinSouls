@@ -35,6 +35,7 @@ namespace TwinSouls
             player1.Width = 50;
             player1.Height = 60;
             player1.soul = "light";
+            player1.EquippedWeapon = new Weapon(50);
 
             playerLeft.DataBindings.Add(new Binding("Text", player1, "Left"));
             playerTop.DataBindings.Add(new Binding("Text", player1, "Top"));
@@ -55,6 +56,7 @@ namespace TwinSouls
             player2.Width = 50;
             player2.Height = 60;
             player2.soul = "dark";
+            player2.EquippedWeapon = new Weapon(50);
 
             p2 = new PictureBox();
             p2.Image = Properties.Resources.player;
@@ -77,7 +79,7 @@ namespace TwinSouls
             shot.Image = Properties.Resources.key;
             shot.Tag = "shot";
             Controls.Add(shot);
-            shot.Left += 50;
+            shot.Left += p.EquippedWeapon.Range;
 
             for (int i = 0; i < enemies.Count; i++)
             {
@@ -268,7 +270,7 @@ namespace TwinSouls
         // add a new enemy every 5 seconds, up to 5 enemies
         private void enemyTimer_Tick(object sender, EventArgs e)
         {
-            if (enemies.Count > 0)
+            if (enemies.Count > 4)
                 return;
 
             SpawnEnemy();

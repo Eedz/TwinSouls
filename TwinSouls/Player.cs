@@ -18,7 +18,7 @@ namespace TwinSouls
 
         public bool goleft = false;
         public bool goright = false;
-
+        public Weapon EquippedWeapon { get; set; }
 
         public int Left
         {
@@ -44,6 +44,8 @@ namespace TwinSouls
         {
             playSpeed = 18;
         }
+
+
 
         // Create the OnPropertyChanged method to raise the event
         protected void OnPropertyChanged(string name)
